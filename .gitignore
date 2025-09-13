@@ -1,0 +1,54 @@
+# -------------------------------
+# Entorno virtual
+# -------------------------------
+venv/
+mi_entorno/
+.env
+
+# -------------------------------
+# Archivos de Python compilados
+# -------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# -------------------------------
+# Archivos temporales / logs
+# -------------------------------
+*.log
+*.tmp
+*.bak
+
+# -------------------------------
+# Archivos de audio temporales
+# -------------------------------
+*.wav
+*.mp3
+*.flac
+
+# -------------------------------
+# Configuración y datos de Firebase
+# -------------------------------
+.firebase/
+.firebaserc
+
+# -------------------------------
+# Archivos del sistema operativo
+# -------------------------------
+.DS_Store
+Thumbs.db
+
+# -------------------------------
+# IDEs y editores
+# -------------------------------
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# -------------------------------
+# Otros archivos de caché
+# -------------------------------
+*.cache
+*.sqlite3

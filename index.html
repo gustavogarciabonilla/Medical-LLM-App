@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Medical LLM App</title>
+</head>
+<body>
+  <h1>Medical LLM App</h1>
+
+  <!-- Entrada de texto -->
+  <label>Texto libre:</label><br>
+  <textarea id="textoInput" rows="4" cols="50" placeholder="Escribe los síntomas o la consulta aquí..."></textarea><br><br>
+  <button onclick="procesarTexto()">Procesar Texto</button>
+
+  <hr>
+
+  <!-- Entrada de audio -->
+  <label>Sube un archivo de audio (.wav o .mp3):</label><br>
+  <input type="file" id="audioFile" accept=".wav,.mp3"><br><br>
+  <button onclick="procesarAudio()">Procesar Audio</button>
+
+  <h2>Resultado:</h2>
+  <pre id="resultado"></pre>
+
+<script>
+const API_BASE = "http://127.0.0.1:5005";
+
+async function procesarTexto() {
+  try {
+    const texto = document.getElementById("textoInput").value;
+    if (!texto) {
+      alert("Escribe algún texto primero.");
+      return;
+    }
+
+    const res = await fetch(`${API_BASE}/procesar_texto`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ texto })
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`Error ${res.status}: ${err}`);
+    }
+
+    const data = await res.json();
+    document.getElementById("resultado").textContent = JSON.stringify(data, null, 2);
+
+  } catch (e) {
+    document.getElementById("resultado").textContent = "❌ " + e.message;
+  }
+}
+
+async function procesarAudio() {
+  const fileInput = document.getElementById("audioFile");
+  if (fileInput.files.length === 0) {
+    alert("Selecciona un archivo de audio primero.");
+    return;
+  }
+
+  const file = fileInput.files[0];
+  const formato = file.name.split('.').pop().toLowerCase();
+
+  const allowedFormats = ["wav", "mp3"];
+  if (!allowedFormats.includes(formato)) {
+    alert("Formato no permitido. Solo se aceptan .wav y .mp3");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async () => {
+    const base64Audio = reader.result.split(',')[1];
+
+    try {
+      const res = await fetch(`${API_BASE}/procesar_audio`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ audio: base64Audio, formato })
+      });
+
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(`Error ${res.status}: ${err}`);
+      }
+
+      const data = await res.json();
+      document.getElementById("resultado").textContent = JSON.stringify(data, null, 2);
+
+    } catch (e) {
+      document.getElementById("resultado").textContent = "❌ " + e.message;
+    }
+  };
+
+  reader.readAsDataURL(file);
+}
+</script>
+</body>
+</html>
